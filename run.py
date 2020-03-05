@@ -7,7 +7,7 @@ from Character import Base, Character
 app = Flask(__name__)
 
 
-engine = create_engine('sqlite:///character.db')
+engine = create_engine('sqlite:///characters.db')
 
 Base.metadata.bind = engine
 
