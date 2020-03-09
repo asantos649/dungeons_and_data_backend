@@ -16,12 +16,14 @@ DBSession = sessionmaker(bind=engine)
 
 session = DBSession()
 
-@app.route('/api/characters', methods=['GET','POST'])
-def character():
-    def clean_char(char):
+def clean_char(char):
         temp = char.__dict__
         del temp['_sa_instance_state']
         return temp
+
+@app.route('/api/characters', methods=['GET','POST'])
+def characters():
+    
 
     if (request.method == 'GET'):
         characters = map(lambda x: clean_char(x), session.query(Character).all())
@@ -36,3 +38,10 @@ def character():
 
     session.commit()
     return response
+
+@app.route('/api/characters/<int:id>', methods=['GET','PATCH','DELETE'])
+def character(id):
+    if(request.method == 'GET'):
+        response = ('geting character {}'.format(id))
+        char = session.query(Character).get(id)
+        return (jsonify(clean_char(char)))
