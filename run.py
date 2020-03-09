@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from Character import Base, Character
 
 app = Flask(__name__)
-
+CORS(app)
 
 engine = create_engine('sqlite:///characters.db')
 
@@ -24,12 +25,14 @@ def character():
 
     if (request.method == 'GET'):
         characters = map(lambda x: clean_char(x), session.query(Character).all())
-        return jsonify(characters)
+        response =  jsonify(characters)
 
     if (request.method == 'POST'):
         data = request.get_json()
-        char = Character(name=data['name'], charClass= data['class'], race= data['race'])
+        char = Character(**data)
         session.add(char)
-        return jsonify(clean_char(char))
+
+        response = jsonify(clean_char(char))
 
     session.commit()
+    return response
